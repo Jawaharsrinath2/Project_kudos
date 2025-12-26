@@ -9,12 +9,10 @@ app = Flask(__name__)
 MODEL_PATH = "model.pkl"
 
 def load_or_train_model():
-    # If model already exists, load it
     if os.path.exists(MODEL_PATH):
         with open(MODEL_PATH, "rb") as f:
             return pickle.load(f)
 
-    # Else: train model from CSV
     model = TfidfNaiveBayes()
 
     with open("data.csv", "r", encoding="utf-8") as file:
@@ -22,13 +20,11 @@ def load_or_train_model():
         for row in reader:
             model.train(row["review"], row["sentiment"])
 
-    # Save trained model (inside Render container)
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(model, f)
 
     return model
 
-# Load or train model at startup
 model = load_or_train_model()
 
 HTML = """
@@ -51,4 +47,5 @@ def home():
     return render_template_string(HTML, result=result)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
