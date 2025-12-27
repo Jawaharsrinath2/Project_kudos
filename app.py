@@ -1,31 +1,10 @@
 from flask import Flask, request, render_template_string
 import pickle
-import os
-import csv
-from model import TfidfNaiveBayes
 
 app = Flask(__name__)
 
-MODEL_PATH = "model.pkl"
-
-def train_model_once():
-    model = TfidfNaiveBayes()
-    with open("data.csv", "r", encoding="utf-8") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            model.train(row["review"], row["sentiment"])
-    with open(MODEL_PATH, "wb") as f:
-        pickle.dump(model, f)
-    return model
-
-# 🔥 TRAIN OR LOAD AT STARTUP (SAFE)
-if os.path.exists(MODEL_PATH):
-    with open(MODEL_PATH, "rb") as f:
-        model = pickle.load(f)
-else:
-    print("Training model at startup...")
-    model = train_model_once()
-    print("Training completed.")
+with open("model.pkl", "rb") as f:
+    model = pickle.load(f)
 
 HTML = """
 <h2>Sentiment Analysis (From Scratch)</h2>
