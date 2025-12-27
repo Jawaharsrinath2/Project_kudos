@@ -3,7 +3,7 @@ import math
 class TfidfNaiveBayes:
 
     def __init__(self):
-        self.punctuations = "!@#$%^&*(),./;'[]\\|?"
+        self.punctuations = "!@#$%^&*(),./;'[]\\|?\"’“”"
         self.stopwords = [
             "i", "am", "is", "are", "the", "a", "an",
             "and", "or", "of", "to", "in", "on", "for", "with"
@@ -21,6 +21,7 @@ class TfidfNaiveBayes:
 
     def tokenize(self, text):
         text = text.lower()
+        text = text.replace("’", "'").replace("“", '"').replace("”", '"')
         cleaned = ""
 
         for char in text:
@@ -96,7 +97,9 @@ class TfidfNaiveBayes:
 
 
     def predict(self, text):
-        tokens = self.tokenize(text)
+        # tokens = self.tokenize(text)
+        tokens = [w for w in tokens if w in self.vocab]
+
         tfidf = self.tfidf_vector(tokens)
 
         scores = {}
