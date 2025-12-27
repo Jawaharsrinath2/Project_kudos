@@ -53,8 +53,9 @@ class TfidfNaiveBayes:
         total = len(tokens)
 
         for word in tokens:
-            idx = self.vocab[word]
-            tf[idx] += 1
+            if word in self.vocab:
+              idx = self.vocab[word]
+              tf[idx] += 1
 
         for i in range(len(tf)):
             tf[i] /= total
