@@ -97,7 +97,7 @@ class TfidfNaiveBayes:
 
 
     def predict(self, text):
-        # tokens = self.tokenize(text)
+        tokens = self.tokenize(text)
         tokens = [w for w in tokens if w in self.vocab]
 
         tfidf = self.tfidf_vector(tokens)
