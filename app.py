@@ -7,12 +7,20 @@ from model import TfidfNaiveBayes
 app = Flask(__name__)
 
 MODEL_PATH = "model.pkl"
+model = None  # global lazy-loaded model
 
-def load_or_train_model():
+def get_model():
+    global model
+
+    if model is not None:
+        return model
+
     if os.path.exists(MODEL_PATH):
         with open(MODEL_PATH, "rb") as f:
-            return pickle.load(f)
+            model = pickle.load(f)
+            return model
 
+    # Train model ONLY once, lazily
     model = TfidfNaiveBayes()
 
     with open("data.csv", "r", encoding="utf-8") as file:
@@ -25,7 +33,6 @@ def load_or_train_model():
 
     return model
 
-model = load_or_train_model()
 
 HTML = """
 <h2>Sentiment Analysis (From Scratch)</h2>
@@ -43,9 +50,8 @@ def home():
     result = None
     if request.method == "POST":
         text = request.form["text"]
-        result = model.predict(text)
+        mdl = get_model()
+        result = mdl.predict(text)
     return render_template_string(HTML, result=result)
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+
